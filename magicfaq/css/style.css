@@ -1,0 +1,60 @@
+
+/* write custom css */
+
+
+.uw-footer {
+  background:none;
+  background-color: #4b2e83;
+}
+
+.fui-radio-checked, .fui-radio-unchecked {
+  display:none;
+}
+
+li.closed div.ask-dubs-answer {
+  -webkit-transition: max-height .5s ease-in; 
+  -moz-transition: max-height .5s ease-in; 
+  -ms-transition: max-height .5s ease-in; 
+  -o-transition: max-height .5s ease-in; 
+  transition: max-height .5s ease-in;  
+  overflow: hidden;
+  max-height: 0;
+}
+
+div.collapso {
+  -webkit-transition: max-height .5s ease-out;
+  -moz-transition: max-height .5s ease-out;
+  -ms-transition: max-height .5s ease-out;
+  -o-transition: max-height .5s ease-out;
+  transition: max-height .5s ease-out;
+  overflow: hidden;
+  max-height:400px;
+}
+
+p.helpful-q {
+    display:inline-block;
+    float:left;
+}
+
+p.helpful-a {
+    display:inline-block;
+    float:left;
+    margin-left:10px;
+}
+
+div.ask-dubs-answer hr {
+    margin-bottom:10px;
+}
+
+#ask-dubs-subtitle {
+    color: #4b2e83;
+}
+
+#dubs-answers-container {
+    -webkit-transition: opacity .25s ease-out;
+    -moz-transition: opacity .25s ease-out;
+    -ms-transition: opacity .25s ease-out;
+    -o-transition: opacity .25s ease-out;
+    transition: opacity .25s ease-out;
+}
+
