@@ -76,8 +76,8 @@
         dubsAnswersContainer.css('opacity', 0);
 
         $.ajax({
-            url: 'data.json',
-            //url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
+            //url: 'data.json',
+            url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
             method: "GET",
             data: { question: question, url: window.location.href }
         }).success(function(msg) {
@@ -95,8 +95,8 @@
 
     var giveFeedback = function(questionId, magnitude) {
         $.ajax({
-            url: 'data.json',
-            //url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
+            //url: 'data.json',
+            url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
             method: "POST",
             data: {
                 questionId: questionId,
