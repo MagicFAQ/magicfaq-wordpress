@@ -11,7 +11,7 @@
   display:none;
 }
 
-li.closed div.ask-dubs-answer {
+li.closed div.magicfaq-answer {
   -webkit-transition: max-height .5s ease-in; 
   -moz-transition: max-height .5s ease-in; 
   -ms-transition: max-height .5s ease-in; 
@@ -42,15 +42,15 @@ p.helpful-a {
     margin-left:10px;
 }
 
-div.ask-dubs-answer hr {
+div.magicfaq-answer hr {
     margin-bottom:10px;
 }
 
-#ask-dubs-subtitle {
+h3.magicfaq-subtitle {
     color: #4b2e83;
 }
 
-#dubs-answers-container {
+#magicfaq-answers-container {
     -webkit-transition: opacity .25s ease-out;
     -moz-transition: opacity .25s ease-out;
     -ms-transition: opacity .25s ease-out;

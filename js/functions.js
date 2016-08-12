@@ -1,21 +1,20 @@
-(function($){ 
-    "use strict";
+$(function() { magicfaq = (function() { 
 
-    console.log('hello');
-
-    var question = "";
-    var dubsAnswersContainer = $('#dubs-answers-container');
-
-    var updateQuestion = function() {
-        question = $("form.ask-dubs input[name=question]").val();
-    };
+    var magicfaqAnswersContainer = $('#magicfaq-answers-container');
+    var magicfaqAskForm = $('#magicfaq-ask');
+    var baseAPIPath = magicfaqAskForm.data('base-api-path');
+    var defaultQuestionsSubtitle = $('h3.magicfaq-subtitle.default-questions');
+    var resultsSubtitle = $('h3.magicfaq-subtitle.results');
+    var notFoundSubtitle = $('h3.magicfaq-subtitle.not-found');
+    var notHelpfulPrompt = $('p.magicfaq-recommend-prompt.not-helpful');
+    var notFoundPrompt = $('p.magicfaq-recommend-prompt.not-found');
 
     var answerClickFunction = function(e) {
         e.preventDefault();
         $(this).blur();
 
         var listItem = $(this).parents('li');
-        var answer = listItem.find('div.ask-dubs-answer');
+        var answer = listItem.find('div.magicfaq-answer');
 
         if (listItem.hasClass('feedback-submitted') === false) {
             giveFeedback(listItem.data('question-id'), 1);
@@ -42,65 +41,78 @@
             listItem.removeClass('open').addClass('closed');
         }
     };
+    
     var addQuestion = function(questionText, answer, id) {
-        var questionItem = $('<li class="ask-dubs closed" data-question-id="' + id + '">' +
-            '<a class="ask-dubs-question" href="#">' + questionText + '</a>' +
-            '<div class="ask-dubs-answer"><p>' + answer + '</p>' +
-            '<div class="ask-dubs-question-feedback"><p class="helpful-q">Helpful?</p>' +
+        var questionItem = $('<li class="magicfaq closed" data-question-id="' + id + '">' +
+            '<a class="magicfaq-question" href="#">' + questionText + '</a>' +
+            '<div class="magicfaq-answer"><p>' + answer + '</p>' +
+            '<div class="magicfaq-question-feedback"><p class="helpful-q">Helpful?</p>' +
             '<p class="helpful-a"><a href="#">Yes</a> - <a href="#">Sort of</a> - <a href="#">No</a></p></div>' +
             '<hr></div></li>');
 
-        questionItem.find('a.ask-dubs-question').click(answerClickFunction);
-        questionItem.appendTo('ul.ask-dubs');
+        questionItem.find('a.magicfaq-question').click(answerClickFunction);
+        questionItem.appendTo('ul.magicfaq');
 
-        $('div.ask-dubs-question-feedback a').click(function() {
-            $(this).closest('div.ask-dubs-question-feedback').html('Thank you for your feedback!');
+        $('div.magicfaq-question-feedback a').click(function() {
+            $(this).closest('div.magicfaq-question-feedback').html('Thank you for your feedback!');
             return false;
         });
     }
 
-    var askQuestion = function() {
-        updateQuestion();
+    var askQuestion = function(question) {
 
-        var subtitleText;
+        var isBlankQuestion = (typeof question === 'undefined' || question === '');
 
-        if (typeof question === 'undefined' || question === "") {
-            subtitleText = "This Week's Hottest Questions:"
-        } else {
-            subtitleText = "Registrar Answers:"
-            $('#ask-dubs-recommend').css('display', 'block');
-            $('#ask-dubs-recommend-feedback').css('display', 'none');
-            $('#ask-dubs-recommend input').val(question);
+        defaultQuestionsSubtitle.hide();
+        resultsSubtitle.hide();
+        notFoundSubtitle.hide();
+        notHelpfulPrompt.hide();
+        notFoundPrompt.hide();
+
+        if (!isBlankQuestion) {
+            $('#magicfaq-recommend').show();
+            $('#magicfaq-recommend-feedback').hide();
+            $('#magicfaq-recommend input').val(question);
         }
 
-        dubsAnswersContainer.css('opacity', 0);
+        magicfaqAnswersContainer.css('opacity', 0);
 
         $.ajax({
-            //url: 'data.json',
-            url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
+            url: baseAPIPath + 'questions/',
             method: "GET",
             data: { question: question, url: window.location.href }
         }).success(function(msg) {
-            $('#ask-dubs-subtitle').html(subtitleText);
-            $('li.ask-dubs').remove();  
             msg = JSON.parse(msg);
             var questions = msg['questions'];
+             
+            if (questions.length ===0 ) {
+                notFoundSubtitle.show();
+                notFoundPrompt.show();
+            }
+            else if (isBlankQuestion) {
+                defaultQuestionsSubtitle.show();
+            } else {
+                resultsSubtitle.show();
+                notHelpfulPrompt.show();
+            }   
+            
+            $('li.magicfaq').remove();  
 
             for (var i = 0; i < questions.length; i++) {
                 addQuestion(questions[i].question, questions[i].answer, questions[i].id);
-            }   
-            dubsAnswersContainer.css('opacity', 1);
+            }
+
+            magicfaqAnswersContainer.css('opacity', 1);
         });
     }
 
     var giveFeedback = function(questionId, magnitude) {
         $.ajax({
-            //url: 'data.json',
             url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
             method: "POST",
             data: {
                 questionId: questionId,
-                question: question,
+                //question: question,
                 magnitude: magnitude,
                 url: window.location.href
             }
@@ -108,14 +120,16 @@
 
     };
 
-    $('#ask-dubs-recommend button').click(function() {
-
-        $('#ask-dubs-recommend input').val('');
-        $('#ask-dubs-recommend').css('display', 'none');
-        $('#ask-dubs-recommend-feedback').css('display', 'block');
+    $('#magicfaq-recommend button').click(function() {
+        $('#magicfaq-recommend input').val('');
+        $('#magicfaq-recommend').css('display', 'none');
+        $('#magicfaq-recommend-feedback').css('display', 'block');
     });
 
-    askQuestion();
+    askQuestion('');
 
-})(jQuery);
+    return {
+        askQuestion: askQuestion,
+    }
+})()});
 

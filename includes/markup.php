@@ -1,6 +1,6 @@
 <h1>Magic FAQs</h1>
 
-<div id="text-3" class="widget widget_text"><h2 class="widgettitle">Ask the Registrar</h2>
+<div id="text-3" class="widget widget_text"><h2 class="widgettitle">Ask the Registrarrr</h2>
             <div class="textwidget"><form class=ask-dubs onsubmit="askQuestion(); return false;">
 <input style=width:250px type=text name=question /> <input style=margin-left:10px type=submit value="Ask!" />
 </form>
