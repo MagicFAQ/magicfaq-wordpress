@@ -9,6 +9,10 @@ $(function() { magicfaq = (function() {
     var notHelpfulPrompt = $('p.magicfaq-recommend-prompt.not-helpful');
     var notFoundPrompt = $('p.magicfaq-recommend-prompt.not-found');
 
+    var getQuestionAsked = function() {
+        return magicfaqAnswersContainer.data('question-asked');
+    };
+
     var answerClickFunction = function(e) {
         e.preventDefault();
         $(this).blur();
@@ -17,7 +21,7 @@ $(function() { magicfaq = (function() {
         var answer = listItem.find('div.magicfaq-answer');
 
         if (listItem.hasClass('feedback-submitted') === false) {
-            giveFeedback(listItem.data('question-id'), 1);
+            giveFeedback(listItem.data('question-id'), getQuestionAsked(), null);
         }
         listItem.addClass('feedback-submitted');
 
@@ -47,21 +51,28 @@ $(function() { magicfaq = (function() {
             '<a class="magicfaq-question" href="#">' + questionText + '</a>' +
             '<div class="magicfaq-answer"><p>' + answer + '</p>' +
             '<div class="magicfaq-question-feedback"><p class="helpful-q">Helpful?</p>' +
-            '<p class="helpful-a"><a href="#">Yes</a> - <a href="#">Sort of</a> - <a href="#">No</a></p></div>' +
+            '<p class="helpful-a"><a href="#" data-magnitude="5">Yes</a> - <a href="#" data-magnitude="1">Sort of</a> - <a href="#" data-magnitude="-2">No</a></p></div>' +
             '<hr></div></li>');
 
         questionItem.find('a.magicfaq-question').click(answerClickFunction);
         questionItem.appendTo('ul.magicfaq');
 
-        $('div.magicfaq-question-feedback a').click(function() {
-            $(this).closest('div.magicfaq-question-feedback').html('Thank you for your feedback!');
+        questionItem.find('p.helpful-a a').click(function() {
+            var a = $(this);
+            var magnitude = a.data('magnitude');
+            var questionId = a.closest('li').data('question-id');
+
+            a.closest('div.magicfaq-question-feedback').html('Thank you for your feedback!');
+            giveFeedback(questionId, getQuestionAsked(), magnitude);
             return false;
         });
-    }
+    };
 
     var askQuestion = function(question) {
 
         var isBlankQuestion = (typeof question === 'undefined' || question === '');
+
+        magicfaqAnswersContainer.data('question-asked', question.replace(/[^-\w\s]+$/, ''));
 
         defaultQuestionsSubtitle.hide();
         resultsSubtitle.hide();
@@ -104,15 +115,15 @@ $(function() { magicfaq = (function() {
 
             magicfaqAnswersContainer.css('opacity', 1);
         });
-    }
+    };
 
-    var giveFeedback = function(questionId, magnitude) {
+    var giveFeedback = function(questionId, question, magnitude) {
         $.ajax({
-            url: "https://apps.doem.washington.edu/questions/ajax/handle.php",
+            url: baseAPIPath + 'feedback/',
             method: "POST",
             data: {
-                questionId: questionId,
-                //question: question,
+                'question-id': questionId,
+                question: question,
                 magnitude: magnitude,
                 url: window.location.href
             }
